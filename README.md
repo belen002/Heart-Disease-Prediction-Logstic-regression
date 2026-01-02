@@ -3,7 +3,7 @@
 This is a web application that predicts the likelihood of heart disease using a **Logistic Regression** model. The model was trained on the UCI Heart Disease dataset.
 
 ## Live Demo
-[Click here to view the Live App](https://heart-disease-prediction-decision-tree.onrender.com)
+[Click here to view the Live App](https://heart-disease-prediction-logstic.onrender.com)
 
 ## Features
 - Fast and interpretable linear classification.
