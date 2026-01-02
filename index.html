@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HeartHealth AI - Logistic Regression</title>
+    <style>
+        :root { --med-blue: #0056b3; --light-blue: #eef4fb; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--light-blue); display: flex; justify-content: center; padding: 20px; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        h2 { color: var(--med-blue); text-align: center; margin-bottom: 20px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        label { font-size: 12px; color: #666; font-weight: bold; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: var(--med-blue); color: white; border: none; border-radius: 8px; font-weight: bold; margin-top: 20px; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #003d80; }
+        #result { margin-top: 20px; text-align: center; font-weight: bold; padding: 15px; border-radius: 8px; display: none; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>HeartCheck AI</h2>
+        <form id="pForm">
+            <div class="grid">
+                <div><label>Age</label><input type="number" id="age" value="50"></div>
+                <div><label>Sex</label><select id="sex"><option value="1">Male</option><option value="0">Female</option></select></div>
+                <div><label>Resting BP</label><input type="number" id="trestbps" value="120"></div>
+                <div><label>Cholesterol</label><input type="number" id="chol" value="200"></div>
+                <div><label>Max HR</label><input type="number" id="thalch" value="150"></div>
+                <div><label>Oldpeak</label><input type="number" step="0.1" id="oldpeak" value="1.0"></div>
+                <div><label>Vessels (0-3)</label><input type="number" id="ca" value="0"></div>
+            </div>
+            <button type="submit">Analyze Patient Data</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('pForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const resultDiv = document.getElementById('result');
+            const data = {
+                age: parseFloat(document.getElementById('age').value),
+                sex_Male: parseInt(document.getElementById('sex').value),
+                trestbps: parseFloat(document.getElementById('trestbps').value),
+                chol: parseFloat(document.getElementById('chol').value),
+                thalch: parseFloat(document.getElementById('thalch').value),
+                oldpeak: parseFloat(document.getElementById('oldpeak').value),
+                ca: parseFloat(document.getElementById('ca').value),
+                // Other fields defaulted to 0 for this simplified UI
+                cp_atypical_angina: 0, cp_non_anginal: 1, cp_typical_angina: 0,
+                restecg_normal: 1, restecg_st_t_abnormality: 0, slope_flat: 1,
+                slope_upsloping: 0, thal_normal: 1, thal_reversable_defect: 0,
+                fbs_True: 0, exang_True: 0
+            };
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+            const res = await response.json();
+            resultDiv.style.display = 'block';
+            resultDiv.innerText = res.prediction;
+            resultDiv.style.backgroundColor = res.color + '22'; // Light version of color
+            resultDiv.style.color = res.color;
+        };
+    </script>
+</body>
+</html>
